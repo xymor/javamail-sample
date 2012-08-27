@@ -13,8 +13,6 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.URLName;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.sun.mail.imap.IMAPFolder;
 
 public class SessionManager {
