@@ -26,32 +26,35 @@ import com.google.common.collect.Sets;
 import com.sun.mail.imap.IMAPFolder;
 
 public class FolderManager {
-	
-	public void synchronizeFolders(Folder left, Folder right) throws MessagingException {
+
+	public void synchronizeFolders(Folder left, Folder right)
+			throws MessagingException {
 		openFolder(left);
 		openFolder(right);
-        Message[] leftMessages = left.getMessages();
-        Message[] rightMessages = right.getMessages();
-        
-        Message[] messagesToCopyLeft = MessageDTO.difference(leftMessages,rightMessages);
-        Message[] messagesToCopyRight = MessageDTO.difference(rightMessages,leftMessages);
-        
-        System.out.println("Messages to be synched: " + (messagesToCopyLeft.length + messagesToCopyRight.length));
-        
-        right.copyMessages(messagesToCopyLeft, left);
-        left.copyMessages(messagesToCopyRight, right);
-        
-        left.close(false);
-        right.close(false);
-        System.out.println("Done.");
-    }
-	
-	private void openFolder(Folder f) throws MessagingException{
-        if (!f.exists()) {
-            f.create(Folder.HOLDS_MESSAGES);
-        }
+		Message[] leftMessages = left.getMessages();
+		Message[] rightMessages = right.getMessages();
+
+		Message[] messagesToCopyLeft = MessageDTO.difference(leftMessages,
+				rightMessages);
+		Message[] messagesToCopyRight = MessageDTO.difference(rightMessages,
+				leftMessages);
+
+		System.out.println("Messages to be synched: "
+				+ (messagesToCopyLeft.length + messagesToCopyRight.length));
+
+		right.copyMessages(messagesToCopyLeft, left);
+		left.copyMessages(messagesToCopyRight, right);
+
+		left.close(false);
+		right.close(false);
+		System.out.println("Done.");
+	}
+
+	private void openFolder(Folder f) throws MessagingException {
+		if (!f.exists()) {
+			f.create(Folder.HOLDS_MESSAGES);
+		}
 		f.open(Folder.READ_WRITE);
 	}
-	
-	
+
 }

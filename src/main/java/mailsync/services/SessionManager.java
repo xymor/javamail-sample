@@ -20,16 +20,17 @@ import com.sun.mail.imap.IMAPFolder;
 public class SessionManager {
 
 	private String[] serverSettings;
-	
+
 	private String server;
 	private String email;
 	private String password;
-	
+
 	private String folderName;
-	
+
 	private Session session;
-	
-	public SessionManager(String folder,String server, String email, String password){
+
+	public SessionManager(String folder, String server, String email,
+			String password) {
 		Properties props = System.getProperties();
 		props.setProperty("mail.store.protocol", "imaps");
 		props.put("mail.smtp.connectiontimeout", "10");
@@ -44,7 +45,7 @@ public class SessionManager {
 	public IMAPFolder getImapFolder() throws MessagingException {
 		IMAPFolder folder;
 		Store sourceStore = session.getStore("imaps");
-		sourceStore.connect(server,email,password);
+		sourceStore.connect(server, email, password);
 		if (folderName == null) {
 			folder = (IMAPFolder) sourceStore.getDefaultFolder();
 		} else {
