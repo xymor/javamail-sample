@@ -10,7 +10,7 @@
 	<context:annotation-config xmlns="mailsync" />
 	<context:property-placeholder location="classpath:default.properties"
 		system-properties-mode="OVERRIDE" />
-
+		
 	<bean name="sessionManager" class="mailsync.services.SessionManager">
 		<constructor-arg index="0" value="${folderName}" />
 		<constructor-arg index="1" value="${protocol}" />

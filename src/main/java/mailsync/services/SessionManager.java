@@ -1,5 +1,8 @@
 package mailsync.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +10,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.URLName;
+import javax.mail.internet.MimeMessage;
 
 import com.sun.mail.imap.IMAPFolder;
 
@@ -22,9 +27,7 @@ public class SessionManager {
 	private String server;
 	private String email;
 	private String password;
-
 	private String folderName;
-
 	private Session session;
 
 	public SessionManager(String folder, String server, String email,
@@ -33,6 +36,7 @@ public class SessionManager {
 		props.setProperty("mail.store.protocol", "imaps");
 		props.put("mail.smtp.connectiontimeout", "10");
 		props.put("mail.smtp.timeout", "1000");
+		//props.put("mail.debug", "true");
 		this.server = server;
 		this.password = password;
 		this.email = email;
@@ -51,4 +55,14 @@ public class SessionManager {
 		}
 		return folder;
 	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+	
+	
 }

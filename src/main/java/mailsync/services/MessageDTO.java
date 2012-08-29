@@ -1,10 +1,14 @@
 package mailsync.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import com.google.common.base.Joiner;
@@ -13,12 +17,12 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 public class MessageDTO {
-	String recipients;
-	String from;
-	String subject;
-	String content;
-	Date sent;
-	Message m;
+	private String recipients;
+	private String from;
+	private String subject;
+	private String content;
+	private Date sent;
+	private Message message;
 
 	public int hashCode() {
 		return Objects.hashCode(recipients, from, subject, content, sent);
@@ -44,17 +48,26 @@ public class MessageDTO {
 		}
 		return messages;
 	}
-
+	
 	static public Message[] difference(Message[] listA, Message[] listB) {
 		SetView<MessageDTO> difference = Sets.difference(buildDtos(listA),
 				buildDtos(listB));
 		System.out.println("Difference found: " + difference.size());
 		return recoverMessages(difference);
 	}
+	
+	static public Message[] differenceWithNewSession(Session s, Message[] listA, Message[] listB){
+		Message[] messages = difference(listA,listB); 
+		Message[] newSessionMessages = new Message[messages.length];
+		for(int i = 0; i <= messages.length -1; i++){
+			newSessionMessages[i] = changeSession(messages[1], s);
+		}
+		return newSessionMessages;
+	}
 
 	public MessageDTO(Message m) {
 		try {
-			this.m = m;
+			this.message = m;
 			recipients = Joiner.on(",").join(m.getAllRecipients());
 			from = m.getFrom().toString();
 			sent = m.getSentDate();
@@ -67,7 +80,20 @@ public class MessageDTO {
 			me.fillInStackTrace();
 		}
 	}
-
+	
+	
+	public static Message changeSession(Message m, Session s){
+		Message newMessage = null;
+		try{
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			m.writeTo(outputStream);
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+			newMessage = new MimeMessage(s, inputStream);
+		}catch(IOException e){ e.printStackTrace(); }
+		catch(MessagingException e){ e.printStackTrace(); }
+		return newMessage;
+	}
+	
 	private String findContent(Message m) throws IOException,
 			MessagingException {
 		if (m.getContent() instanceof String)
@@ -76,7 +102,7 @@ public class MessageDTO {
 	}
 
 	public Message getMessage() {
-		return m;
+		return message;
 	}
 
 }

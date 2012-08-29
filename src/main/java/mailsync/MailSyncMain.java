@@ -22,7 +22,7 @@ public class MailSyncMain {
     	SessionManager sm2 = (SessionManager) context.getBean("sessionManager2");
     	FolderManager fm = (FolderManager) context.getBean("folderManager");
     	
-    	fm.synchronizeFolders(sm.getImapFolder(), sm2.getImapFolder());
+    	fm.synchronizeFolders(sm.getSession(), sm2.getSession(), sm.getImapFolder(), sm2.getImapFolder());
 
     	System.out.println("ok");
     }

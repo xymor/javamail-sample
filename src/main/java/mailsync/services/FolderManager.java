@@ -12,6 +12,7 @@ import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.event.MessageCountAdapter;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.internet.MimeMultipart;
@@ -27,24 +28,24 @@ import com.sun.mail.imap.IMAPFolder;
 
 public class FolderManager {
 
-	public void synchronizeFolders(Folder left, Folder right)
+	public void synchronizeFolders(Session leftSession, Session rightSession, Folder left, Folder right)
 			throws MessagingException {
 		openFolder(left);
 		openFolder(right);
 		Message[] leftMessages = left.getMessages();
 		Message[] rightMessages = right.getMessages();
 
-		Message[] messagesToCopyLeft = MessageDTO.difference(leftMessages,
+		Message[] messagesToCopyLeft = MessageDTO.differenceWithNewSession(leftSession, leftMessages,
 				rightMessages);
-		Message[] messagesToCopyRight = MessageDTO.difference(rightMessages,
+		Message[] messagesToCopyRight = MessageDTO.differenceWithNewSession(rightSession, rightMessages,
 				leftMessages);
 
 		System.out.println("Messages to be synched: "
 				+ (messagesToCopyLeft.length + messagesToCopyRight.length));
 
-		right.copyMessages(messagesToCopyLeft, left);
-		left.copyMessages(messagesToCopyRight, right);
-
+		left.appendMessages(messagesToCopyLeft);
+		right.appendMessages(messagesToCopyRight);
+		
 		left.close(false);
 		right.close(false);
 		System.out.println("Done.");
@@ -56,5 +57,4 @@ public class FolderManager {
 		}
 		f.open(Folder.READ_WRITE);
 	}
-
 }
