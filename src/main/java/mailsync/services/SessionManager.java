@@ -34,8 +34,6 @@ public class SessionManager {
 			String password) {
 		Properties props = System.getProperties();
 		props.setProperty("mail.store.protocol", "imaps");
-		props.put("mail.smtp.connectiontimeout", "10");
-		props.put("mail.smtp.timeout", "1000");
 		//props.put("mail.debug", "true");
 		this.server = server;
 		this.password = password;

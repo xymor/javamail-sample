@@ -5,9 +5,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
@@ -25,7 +27,7 @@ public class MessageDTO {
 	private Message message;
 
 	public int hashCode() {
-		return Objects.hashCode(recipients, from, subject, content, sent);
+		return Objects.hashCode(subject, sent);
 	}
 
 	public boolean equals(MessageDTO other) {
@@ -60,7 +62,7 @@ public class MessageDTO {
 		Message[] messages = difference(listA,listB); 
 		Message[] newSessionMessages = new Message[messages.length];
 		for(int i = 0; i <= messages.length -1; i++){
-			newSessionMessages[i] = changeSession(messages[1], s);
+			newSessionMessages[i] = changeSession(messages[i], s);
 		}
 		return newSessionMessages;
 	}
@@ -69,10 +71,12 @@ public class MessageDTO {
 		try {
 			this.message = m;
 			recipients = Joiner.on(",").join(m.getAllRecipients());
-			from = m.getFrom().toString();
+			from = m.getFrom()[0].toString();
 			sent = m.getSentDate();
 			subject = m.getSubject();
 			content = findContent(m);
+			System.out.println(" DTO  "+ this.toString());
+			System.out.println(" hash "+ this.hashCode());
 		} catch (IOException e) {
 			e.fillInStackTrace();
 			content = "";
@@ -81,6 +85,13 @@ public class MessageDTO {
 		}
 	}
 	
+	public String toString(){
+		return " recipients: " + recipients + 
+				" from: " + from + 
+				" sent: " + sent + 
+				" subject: " + subject + 
+				" content: " + content;
+	}
 	
 	public static Message changeSession(Message m, Session s){
 		Message newMessage = null;
@@ -104,5 +115,13 @@ public class MessageDTO {
 	public Message getMessage() {
 		return message;
 	}
+	
+	private Address[] sortRecipients(Address[] recipients){
+		Arrays.sort(recipients,
+				new Comparator<Address>(){ 
+					public int compare(Address obj, Address obj2){ return 1; } 
+				});
+		return recipients;
+	} 
 
 }
