@@ -43,6 +43,9 @@ public class FolderManager {
 		System.out.println("Messages to be synched: "
 				+ (messagesToCopyLeft.length + messagesToCopyRight.length));
 
+		System.out.println("Messages to be copied to: " + left.getStore().getURLName() + " -> "+ messagesToCopyLeft.length );
+		System.out.println("Messages to be copied to: " + right.getStore().getURLName() + " -> "+ messagesToCopyRight.length );
+
 		left.appendMessages(messagesToCopyLeft);
 		right.appendMessages(messagesToCopyRight);
 		

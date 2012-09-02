@@ -24,6 +24,5 @@ public class MailSyncMain {
     	
     	fm.synchronizeFolders(sm.getSession(), sm2.getSession(), sm.getImapFolder(), sm2.getImapFolder());
 
-    	System.out.println("ok");
     }
 }

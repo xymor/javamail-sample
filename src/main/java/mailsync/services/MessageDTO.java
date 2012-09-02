@@ -27,11 +27,21 @@ public class MessageDTO {
 	private Message message;
 
 	public int hashCode() {
-		return Objects.hashCode(subject, sent);
+		try {
+			return ((MimeMessage) this.message).getMessageID().hashCode();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			return Objects.hashCode(subject,sent);
+		}
+		
 	}
 
-	public boolean equals(MessageDTO other) {
-		return other.hashCode() == this.hashCode();
+	public boolean equals(Object other) {
+		if(other instanceof MessageDTO){
+			return other.hashCode() == this.hashCode();
+		}else{
+			return false;
+		}
 	}
 
 	static public Set<MessageDTO> buildDtos(Message[] msgs) {
@@ -54,7 +64,6 @@ public class MessageDTO {
 	static public Message[] difference(Message[] listA, Message[] listB) {
 		SetView<MessageDTO> difference = Sets.difference(buildDtos(listA),
 				buildDtos(listB));
-		System.out.println("Difference found: " + difference.size());
 		return recoverMessages(difference);
 	}
 	
@@ -75,8 +84,6 @@ public class MessageDTO {
 			sent = m.getSentDate();
 			subject = m.getSubject();
 			content = findContent(m);
-			System.out.println(" DTO  "+ this.toString());
-			System.out.println(" hash "+ this.hashCode());
 		} catch (IOException e) {
 			e.fillInStackTrace();
 			content = "";
@@ -114,6 +121,17 @@ public class MessageDTO {
 
 	public Message getMessage() {
 		return message;
+	}
+	
+	private String getMessageId(){
+		String id = null;
+		try {
+			id = ((MimeMessage) message).getMessageID();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return id;
 	}
 	
 	private Address[] sortRecipients(Address[] recipients){
