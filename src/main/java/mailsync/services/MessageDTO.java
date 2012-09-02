@@ -27,13 +27,9 @@ public class MessageDTO {
 	private Message message;
 
 	public int hashCode() {
-		try {
-			return ((MimeMessage) this.message).getMessageID().hashCode();
-		} catch (MessagingException e) {
-			e.printStackTrace();
-			return Objects.hashCode(subject,sent);
-		}
-		
+		return this.getMessageId() != null? 
+				this.getMessageId().hashCode() : 
+				Objects.hashCode(subject,sent);
 	}
 
 	public boolean equals(Object other) {
@@ -133,13 +129,4 @@ public class MessageDTO {
 		}
 		return id;
 	}
-	
-	private Address[] sortRecipients(Address[] recipients){
-		Arrays.sort(recipients,
-				new Comparator<Address>(){ 
-					public int compare(Address obj, Address obj2){ return 1; } 
-				});
-		return recipients;
-	} 
-
 }
